@@ -1,0 +1,291 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="Pete Zah | Proxy">
+    <meta property="og:description" content="Proxy">
+    <meta property="og:image" content="storage/images/logo-png-removebg-preview.png">
+    <meta name="keywords" content="Pete Zah, the next gen gaming site">
+    <title>Pete Zah | Proxy | Settings</title>
+    <link rel="icon" href="storage/images/logo-png-removebg-preview.png" type="image/png">
+    <link rel="stylesheet" href="storage/assets/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: url('/storage/images/main/bg.gif') repeat center center fixed;
+            background-color: black;
+            background-size: cover;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            color: #ffffff;
+            padding: 0;
+        }
+
+        .settings-container {
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px; 
+            margin: 50px auto;
+            padding: 20px; 
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .settings-container h1 {
+            color: gold;
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .settings-container label {
+            display: block;
+            margin: 10px 0 5px;
+            font-size: 16px; 
+        }
+
+        .settings-container input[type="text"], .settings-container input[type="file"] {
+            padding: 8px; 
+            width: 100%;
+            margin: 5px 0;
+            border: 2px solid #444;
+            border-radius: 8px;
+            background-color: #222;
+            color: white;
+            font-size: 14px;
+        }
+
+        .settings-container input[type="checkbox"] {
+            margin: 10px 0;
+        }
+
+        .checkbox-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-container label {
+            margin: 0;
+        }
+
+        .settings-container button {
+            padding: 10px;
+            width: 100%;
+            background-color: #444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px; 
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .settings-container button:hover {
+            background-color: #666;
+        }
+
+        .reset-button {
+            background-color: #f44336;
+        }
+
+        .reset-button:hover {
+            background-color: #d32f2f;
+        }
+
+        hr {
+            border: 1px solid #555;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="settings-container">
+        <h1>Settings</h1>
+
+        <div class="checkbox-container">
+            <div>
+                <label for="beforeUnloadToggle">Anti-Close (Recommended)</label>
+                <input type="checkbox" id="beforeUnloadToggle" />
+            </div>
+            <div>
+                <label for="autocloakToggle">Autocloak (Proxy)</label>
+                <input type="checkbox" id="autocloakToggle" />
+            </div>
+        </div>
+
+        <hr>
+
+        <label for="siteTitle">Set Site Title:</label>
+        <input type="text" id="siteTitle" placeholder="Enter site title" />
+
+        <label for="siteLogo">Set Site Favicon:</label>
+        <input type="file" id="siteLogo" accept="image/*" />
+
+        <button id="saveSettings">Save Title & Favicon</button>
+
+        <hr>
+
+        <label for="panicKey">Set Panic Button Key:</label>
+        <input type="text" id="panicKey" placeholder="Enter key (e.g., F1)" />
+
+        <label for="panicUrl">Set Panic Button URL:</label>
+        <input type="text" id="panicUrl" placeholder="Enter URL to redirect to" />
+
+        <button id="savePanicButtonSettings">Save Panic Button Settings</button>
+
+        <hr>
+
+        <button id="resetSettings" class="reset-button">Reset Tab Name and Icon</button>
+        <button id="resetPanicButtonSettings" class="reset-button">Reset Panic Button Settings</button>
+    </div>
+
+<script>
+    const beforeUnloadToggle = document.getElementById('beforeUnloadToggle');
+    const autocloakToggle = document.getElementById('autocloakToggle');
+    const siteTitleInput = document.getElementById('siteTitle');
+    const siteLogoInput = document.getElementById('siteLogo');
+    const panicKeyInput = document.getElementById('panicKey');
+    const panicUrlInput = document.getElementById('panicUrl');
+    const saveSettingsButton = document.getElementById('saveSettings');
+    const savePanicButtonSettingsButton = document.getElementById('savePanicButtonSettings');
+    const resetSettingsButton = document.getElementById('resetSettings');
+    const resetPanicButtonSettingsButton = document.getElementById('resetPanicButtonSettings');
+
+    beforeUnloadToggle.checked = localStorage.getItem('beforeUnloadEnabled') === 'true';
+    autocloakToggle.checked = localStorage.getItem('autocloakEnabled') === 'true';
+    siteTitleInput.value = localStorage.getItem('siteTitle') || '';
+    panicKeyInput.value = localStorage.getItem('panicKey') || '';
+    panicUrlInput.value = localStorage.getItem('panicUrl') || '';
+
+    const savedLogo = localStorage.getItem('siteLogo');
+    if (savedLogo) {
+        const faviconLink = document.createElement('link');
+        faviconLink.rel = 'icon';
+        faviconLink.href = savedLogo;
+        document.head.appendChild(faviconLink);
+    }
+
+    saveSettingsButton.addEventListener('click', function() {
+        const siteTitle = siteTitleInput.value;
+        const siteLogoFile = siteLogoInput.files[0];
+
+        if (siteTitle) {
+            localStorage.setItem('siteTitle', siteTitle);
+        }
+
+        if (siteLogoFile) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const logoUrl = event.target.result;
+                localStorage.setItem('siteLogo', logoUrl);
+                const faviconLink = document.createElement('link');
+                faviconLink.rel = 'icon';
+                faviconLink.href = logoUrl;
+                document.head.appendChild(faviconLink);
+            };
+            reader.readAsDataURL(siteLogoFile);
+        }
+    });
+
+    savePanicButtonSettingsButton.addEventListener('click', function() {
+        const panicKey = panicKeyInput.value;
+        const panicUrl = panicUrlInput.value;
+
+        if (panicKey) {
+            localStorage.setItem('panicKey', panicKey);
+        }
+
+        if (panicUrl) {
+            localStorage.setItem('panicUrl', panicUrl);
+        }
+    });
+
+    resetSettingsButton.addEventListener('click', function() {
+        localStorage.removeItem('siteTitle');
+        localStorage.removeItem('siteLogo');
+        document.title = 'Home';
+        const defaultFaviconLink = document.querySelector('link[rel="icon"]');
+        if (defaultFaviconLink) {
+            defaultFaviconLink.href = 'storage/images/logo-png-removebg-preview.png';
+        }
+    });
+
+    resetPanicButtonSettingsButton.addEventListener('click', function() {
+        localStorage.removeItem('panicKey');
+        localStorage.removeItem('panicUrl');
+    });
+
+    beforeUnloadToggle.addEventListener('change', function() {
+        localStorage.setItem('beforeUnloadEnabled', beforeUnloadToggle.checked);
+        if (beforeUnloadToggle.checked) {
+            window.addEventListener('beforeunload', function(e) {
+                e.preventDefault();
+                e.returnValue = '';
+            });
+        } else {
+            window.removeEventListener('beforeunload', function(e) {
+                e.preventDefault();
+                e.returnValue = '';
+            });
+        }
+    });
+
+    autocloakToggle.addEventListener('change', function() {
+        localStorage.setItem('autocloakEnabled', autocloakToggle.checked);
+        if (autocloakToggle.checked) {
+        window.onload = function() {
+            const newTab = window.open('about:blank', '_blank');
+            if (!newTab) {
+                alert("Please enable popups to proceed.");
+                return;
+            }
+
+            const siteTitle = localStorage.getItem('siteTitle') || "Home";
+            const siteLogo = localStorage.getItem('siteLogo') || "storage/images/logo-png-removebg-preview.png";
+
+            newTab.document.title = siteTitle;
+
+            const favicon = document.createElement('link');
+            favicon.rel = 'icon';
+            favicon.href = siteLogo;
+            newTab.document.head.appendChild(favicon);
+
+            const iframe = document.createElement('iframe');
+            iframe.src = '/';
+            iframe.style.width = '100vw';
+            iframe.style.height = '100vh';
+            iframe.style.border = 'none';
+            newTab.document.body.style.margin = '0';
+            newTab.document.body.appendChild(iframe);
+
+            const panicUrl = localStorage.getItem('panicUrl') || "https://lms.fcps.edu";
+            window.location.href = panicUrl;
+        };
+
+    if (beforeUnloadToggle.checked) {
+        window.addEventListener('beforeunload', function(e) {
+            e.preventDefault();
+            e.returnValue = '';
+        });
+    }
+
+    window.addEventListener('keydown', function(event) {
+        const panicKey = localStorage.getItem('panicKey');
+        const panicUrl = localStorage.getItem('panicUrl');
+
+        if (event.key === panicKey && panicUrl) {
+            window.location.href = panicUrl;
+        }
+    });
+</script>
+</body>
+</html>
